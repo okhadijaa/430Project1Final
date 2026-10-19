@@ -1,3 +1,4 @@
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,24 +14,15 @@ public class Product implements Serializable {
     public Product(String productId, String productName,
                    int quantity, double unitPrice) {
 
-        if (productId == null || productId.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Product ID cannot be empty.");
-        }
+        if (productId == null || productId.trim().isEmpty()
+                || productName == null
+                || productName.trim().isEmpty()
+                || quantity < 0
+                || !Double.isFinite(unitPrice)
+                || unitPrice < 0) {
 
-        if (productName == null || productName.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                    "Product name cannot be empty.");
-        }
-
-        if (quantity < 0) {
-            throw new IllegalArgumentException(
-                    "Quantity cannot be negative.");
-        }
-
-        if (unitPrice < 0) {
-            throw new IllegalArgumentException(
-                    "Unit price cannot be negative.");
+                "Invalid product details.");
         }
 
         this.productId = productId;
@@ -59,6 +51,24 @@ public class Product implements Serializable {
         return quantity > 0;
     }
 
+    public void addStock(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException(
+                "Stock increase must be positive.");
+        }
+
+        quantity = Math.addExact(quantity, amount);
+    }
+
+    public void reduceStock(int amount) {
+        if (amount <= 0 || amount > quantity) {
+            throw new IllegalArgumentException(
+                "Invalid stock reduction.");
+        }
+
+        quantity -= amount;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -81,9 +91,9 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "Product ID: " + productId
-                + ", Product Name: " + productName
-                + ", Quantity: " + quantity
-                + ", Unit Price: $"
-                + String.format("%.2f", unitPrice);
+            + ", Product Name: " + productName
+            + ", Quantity: " + quantity
+            + ", Unit Price: $"
+            + String.format("%.2f", unitPrice);
     }
 }
