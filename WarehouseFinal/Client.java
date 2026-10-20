@@ -7,9 +7,11 @@ public class Client implements Serializable {
 
     private final String clientId;
     private String clientName;
+    private String address;
     private double balance;
+    private final Wishlist wishlist;
 
-    public Client(String clientId, String clientName) {
+    public Client(String clientId, String clientName, String address) {
 
         if (clientId == null || clientId.trim().isEmpty()) {
             throw new IllegalArgumentException(
@@ -21,9 +23,16 @@ public class Client implements Serializable {
                     "Client name cannot be empty.");
         }
 
+        if (address == null || address.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "Client address cannot be empty.");
+        }
+
         this.clientId = clientId;
         this.clientName = clientName;
+        this.address = address;
         this.balance = 0.0;
+        this.wishlist = new Wishlist();
     }
 
     public String getClientId() {
@@ -34,8 +43,16 @@ public class Client implements Serializable {
         return clientName;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
     public double getBalance() {
         return balance;
+    }
+
+    public Wishlist getWishlist() {
+        return wishlist;
     }
 
     public void addDebit(double amount) {
@@ -54,6 +71,10 @@ public class Client implements Serializable {
         }
 
         balance -= amount;
+    }
+
+    public boolean hasOutstandingBalance() {
+        return balance > 0;
     }
 
     @Override
@@ -79,6 +100,7 @@ public class Client implements Serializable {
     public String toString() {
         return "Client ID: " + clientId
                 + ", Client Name: " + clientName
+                + ", Address: " + address
                 + ", Balance: $"
                 + String.format("%.2f", balance);
     }
